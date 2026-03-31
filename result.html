@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CO₂ Result</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --car:       #FF4D6D;
+    --bike:      #FF9F1C;
+    --factory:   #FFBF69;
+    --elec:      #06D6A0;
+    --wood:      #118AB2;
+    --candle:    #8338EC;
+    --smoking:   #FB5607;
+    --human:     #3A86FF;
+    --animals:   #E63946;
+    --forest:    #2DC653;
+    --waste:     #A8DADC;
+    --bg:        #0a0e1a;
+    --card:      #111827;
+    --border:    rgba(255,255,255,0.07);
+    --text:      #f0f4ff;
+    --sub:       #8892a4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(6,214,160,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 80% 80%, rgba(58,134,255,0.07) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 24px;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: fadeUp 0.7s ease forwards 0.1s;
+  }
+
+  .globe {
+    font-size: 2.2rem;
+    filter: drop-shadow(0 0 12px rgba(6,214,160,0.6));
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(6,214,160,0.5)); }
+    50%       { filter: drop-shadow(0 0 22px rgba(6,214,160,0.9)); }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #f0f4ff 0%, #06D6A0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .total-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 28px;
+    margin-bottom: 36px;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeUp 0.7s ease forwards 0.3s;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+  }
+
+  .total-label {
+    font-size: 0.9rem;
+    color: var(--sub);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .total-value {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 800;
+    color: #FF4D6D;
+    text-shadow: 0 0 20px rgba(255,77,109,0.4);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    gap: 16px;
+  }
+
+  .bar-card {
+    background: var(--card);
+    border: 10px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+  }
+
+  .bar-card:hover {
+    transform: translateY(-4px) scale(1.03);
+    border-color: rgba(255,255,255,0.18);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+  }
+
+  .bar-card.visible {
+    animation: cardIn 0.55s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .category-icon { font-size: 1.6rem; }
+
+  .category-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--sub);
+  }
+
+  .bar-track {
+    width: 44px;
+    height: 120px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 22px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .bar-fill {
+    width: 100%;
+    border-radius: 22px;
+    height: 0%;
+    transition: height 1.4s cubic-bezier(0.22,1,0.36,1);
+    position: relative;
+  }
+
+  .bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    background: rgba(255,255,255,0.35);
+    border-radius: 50%;
+    filter: blur(3px);
+  }
+
+  .bar-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.5s ease 1.6s;
+  }
+
+  .bar-value.show { opacity: 1; }
+
+  .car     .bar-fill { background: linear-gradient(to top, var(--car),     #ff8fa3); }
+  .bike    .bar-fill { background: linear-gradient(to top, var(--bike),    #ffd166); }
+  .factory .bar-fill { background: linear-gradient(to top, var(--factory), #ffe08a); }
+  .elec    .bar-fill { background: linear-gradient(to top, var(--elec),    #80ffda); }
+  .wood    .bar-fill { background: linear-gradient(to top, var(--wood),    #48cae4); }
+  .candle  .bar-fill { background: linear-gradient(to top, var(--candle),  #c77dff); }
+  .smoking .bar-fill { background: linear-gradient(to top, var(--smoking), #ffba08); }
+  .human   .bar-fill { background: linear-gradient(to top, var(--human),   #74b9ff); }
+  .animals .bar-fill { background: linear-gradient(to top, var(--animals), #ff6b81); }
+  .forest  .bar-fill { background: linear-gradient(to top, var(--forest),  #b7e4c7); }
+  .waste   .bar-fill { background: linear-gradient(to top, var(--waste),   #e0fbfc); }
+
+  .car     .bar-value { color: var(--car); }
+  .bike    .bar-value { color: var(--bike); }
+  .factory .bar-value { color: var(--factory); }
+  .elec    .bar-value { color: var(--elec); }
+  .wood    .bar-value { color: var(--wood); }
+  .candle  .bar-value { color: var(--candle); }
+  .smoking .bar-value { color: var(--smoking); }
+  .human   .bar-value { color: var(--human); }
+  .animals .bar-value { color: var(--animals); }
+  .forest  .bar-value { color: var(--forest); }
+  .waste   .bar-value { color: var(--waste); }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .bar-pct {
+    position: absolute;
+    bottom: 4px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    opacity: 0;
+    transition: opacity 0.4s ease 1.8s;
+  }
+  .bar-pct.show { opacity: 1; }
+
+  footer {
+    margin-top: 40px;
+    text-align: center;
+    color: var(--sub);
+    font-size: 0.78rem;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 2s;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <span class="globe">🌍</span>
+    <h1>Your Carbon Footprint Result</h1>
+  </div>
+
+  <div class="total-card">
+    <div>
+      <div class="total-label">Total CO₂ Emission</div>
+      <div class="total-value" id="totalValue"> kg / day</div>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>Tip: Reducing car usage and factory emissions can cut your footprint by up to 60%.</footer>
+</div>
+
+<script>
+  const userInput = JSON.parse(localStorage.getItem('userData'));
+  const total = JSON.parse(localStorage.getItem('co2Result'));
+  console.log('User Input:', userInput);
+  console.log('Total CO₂:', total);
+  const data = [
+    { key: 'car',      icon: '🚗', label: 'Car',          value: userInput.car },
+    { key: 'bike',     icon: '🏍️', label: 'Bike',        value: userInput.bike },
+    { key: 'factory',  icon: '🏭', label: 'Factory',     value: userInput.factory },
+    { key: 'elec',     icon: '⚡',  label: 'Electricity', value: userInput.electricity },
+    { key: 'wood',     icon: '🪵', label: 'Wood',         value: userInput.wood },
+    { key: 'candle',   icon: '🕯️', label: 'Candle',      value: userInput.candle },
+    { key: 'smoking',  icon: '🚬', label: 'Smoking',      value: userInput.smoke },
+    { key: 'human',    icon: '🧍', label: 'Human',        value: userInput.breathing },
+    { key: 'animals',  icon: '🐄', label: 'Animals',      value: userInput.animals },
+    { key: 'forest',   icon: '🌳', label: 'Forest',       value: userInput.forest },
+    { key: 'waste',    icon: '🗑️', label: 'Waste',        value: userInput.waste },
+  ];
+
+  // const total = data.reduce((s, d) => s + d.value, 0);
+  const maxVal = Math.max(...data.map(d => d.value));
+  const grid = document.getElementById('grid');
+  
+
+  data.forEach((item, i) => {
+    const pct = ((item.value / total) * 100).toFixed(1);
+    const barH = Math.max(8, Math.round((item.value / maxVal) * 100));
+
+    const card = document.createElement('div');
+    card.className = `bar-card ${item.key}`;
+    card.innerHTML = `
+      <div class="category-icon">${item.icon}</div>
+      <div class="category-name">${item.label}</div>
+      <div class="bar-track">
+        <div class="bar-fill" data-h="${barH}"></div>
+        <div class="bar-pct">${pct}%</div>
+      </div>
+      <div class="bar-value">${item.value.toLocaleString()} kg</div>
+    `;
+    grid.appendChild(card);
+document.getElementById('totalValue').innerText = total.toLocaleString() + ' kg / day';
+    setTimeout(() => {
+      card.classList.add('visible');
+      setTimeout(() => {
+        card.querySelector('.bar-fill').style.height = barH + '%';
+        card.querySelector('.bar-value').classList.add('show');
+        card.querySelector('.bar-pct').classList.add('show');
+      }, 200);
+    }, 400 + i * 80);
+  });
+  
+</script>
+</body>
+</html>

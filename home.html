@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Carbon Footprint Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 20px;
+    }
+    .container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1, h2 {
+        color: #333;
+    }
+    label {
+        display: block;
+        margin-top: 10px;
+    }
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #218838;
+    }
+    #result {
+        margin-top: 20px;
+        font-size: 1.5em;
+    }body {
+    font-family: Arial;
+    background: linear-gradient(to right, #10242d, #109cd8);
+    color: rgb(24, 10, 10);
+    text-align: center;
+}
+
+.container {
+    width: 60%;
+    margin: auto;
+    background: rgba(126, 118, 118, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+input {
+    width: 50%;
+    padding: 10px;
+    margin: 8px;
+    border-radius: 15px;
+    border: 10px solid #504949;
+}
+
+button {
+    padding: 10px 20px;
+    margin-top: 15px;
+    background: #00ae49;
+    color: rgb(10, 9, 9);
+    border: 5px solid #504949;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #00ac00;
+}
+
+    
+    </style>
+<body>
+
+<h1>🌍 Carbon Footprint Calculator</h1>
+
+<div class="container">
+
+    <!--  Vehicles -->
+      <font size="4" color="#000000">
+    <h2>  🚗Vehicles</h2>
+
+    
+    <label>Car (km/day):</label>
+    <input type="number" id="car">
+
+    <label>Bike (km/day):</label>
+    <input type="number" id="bike">
+
+    <!-- Industry -->
+    <h2>🏭 Industry</h2>
+    <label>Factory usage (hours/day):</label>
+    <input type="number" id="factory">
+
+    <!-- Household -->
+    <h2>🏠 Household</h2>
+    <label>Electricity (kWh/day):</label>
+    <input type="number" id="electricity">
+
+    <!-- Burning -->
+    <h2>🔥 Burning Activities</h2>
+    <label>Wood burned (kg/day):</label>
+    <input type="number" id="wood">
+
+    <label>Candles used:</label>
+    <input type="number" id="candle">
+
+    <label>Smoking (cigarettes/day):</label>
+    <input type="number" id="smoke">
+
+    <!-- Natural -->
+    <h2>🌿 Natural Sources</h2>
+    <label>People breathing (count):</label>
+    <input type="number" id="breathing">
+
+    <label>Animals breathing (count):</label>
+    <input type="number" id="animals">
+
+    <label>Forest fire area (hectare):</label>
+    <input type="number" id="forest">
+
+    <label>Waste decomposition (kg):</label>
+    <input type="number" id="waste">
+
+    <button onclick="calculate()">Calculate CO₂</button>
+
+    <h2 id="result">Total CO₂: 0 kg/day</h2>
+
+</div>
+
+<script>
+    function calculate() {
+
+        let userData = {
+
+     car : Number(document.getElementById("car").value)  * 0.21 || 0,
+     bike : Number(document.getElementById("bike").value) * 0.05 || 0,
+     factory : Number(document.getElementById("factory").value) * 5 || 0,
+     electricity : Number(document.getElementById("electricity").value) * 0.8 || 0,
+     wood : Number(document.getElementById("wood").value) * 1.8 || 0,
+     candle : Number(document.getElementById("candle").value) * 0.02 || 0,
+     smoke : Number(document.getElementById("smoke").value) * 0.014 || 0,
+     breathing : Number(document.getElementById("breathing").value)  * 1 || 0,
+     animals : Number(document.getElementById("animals").value) * 2 || 0,
+     forest : Number(document.getElementById("forest").value) * 1000 || 0,
+     waste : Number(document.getElementById("waste").value) * 0.5 || 0,
+        }
+
+    // let total =
+    //     (car * 0.21) +
+    //     (bike * 0.05) +
+    //     (factory * 5) +
+    //     (electricity * 0.8) +
+    //     (wood * 1.8) +
+    //     (candle * 0.02) +
+    //     (smoke * 0.014) +
+    //     (breathing * 1) +
+    //     (animals * 2) +
+    //     (forest * 1000) +
+    //     (waste * 0.5);
+
+    let total = Object.values(userData).reduce((sum, val) => sum + val, 0);
+    // Save result
+    localStorage.setItem("co2Result", JSON.stringify(total.toFixed(2)));
+
+    // Go to next page
+        window.location.href = "result.html";
+        localStorage.setItem('userData', JSON.stringify(userData));
+    }
+        
+
+
+    
+            
+</script>
+</body>
+</html>
